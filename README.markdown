@@ -17,6 +17,11 @@ the server. Also, make sure you don't share the feed if you use a web-based read
 For your own privacy, I will not offer a hosted version of this feed.
 
 
+## TODO
+
+ * Graceful error handling if auth details are wrong
+ * Graceful error handling if scraping fails
+
 ## Credits and license
 
 By [Henrik Nyh](http://henrik.nyh.se/) under the MIT license:
