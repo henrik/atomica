@@ -90,11 +90,11 @@ protected
       %w[personal banking finance].each {|cat| feed.category :term => cat }
 
       items.each do |item|
-        item_date = item.time.strftime('%Y-%m-%d')
+        item_date = [%w[_ Mån Tis Ons Tors Fre Lör Sön][item.time.wday], item.time.strftime('%Y-%m-%d')].join(' ')
         style = item.is_debit ? 'color:red' : 'color:green'
         feed.entry do |entry|
           # Can't use time-with-index for id, since that will change
-          entry.id      "tag:ica-banken,#{SCHEMA_DATE}:#{@pnr}/#{item.account_number};#{item_date};#{item.event.gsub(/\W/, '')};#{item.amount};#{item.balance}".gsub(/\s+/, '')
+          entry.id      "tag:ica-banken,#{SCHEMA_DATE}:#{@pnr}/#{item.account_number};#{item.time.strftime('%Y-%m-%d')};#{item.event.gsub(/\W/, '')};#{item.amount};#{item.balance}".gsub(/\s+/, '')
           entry.title   item.event
           entry.content %{<dl><dt>Konto:</dt><dd>#{item.account_name} (#{item.account_number})</dd><dt>Datum:</dt><dd>#{item_date}</dd><dt>Belopp:</dt><dd style="#{style}">#{item.amount}</dd><dt>Saldo:</dt><dd>#{item.balance}</dd></dl>}, :type => 'html'
           entry.updated item.time.iso8601
