@@ -51,12 +51,14 @@ protected
       rows.each_with_index do |row, index|
         label = row.at('label')
         next unless label
+        vals = row.search('div.value').map {|x| x.inner_text }
+
         event = label.inner_text
-        vals = row.search('div.value').map {|x| x.inner_text }  
         time = Time.parse(vals.first[/\d{4}-\d\d-\d\d/])
         time = time + rows.length - index  # to order items within same date
         amount = vals[1][/- Belopp (.+ kr)/, 1]
         balance = vals.last[/- Saldo (.+ kr)/, 1]
+        is_debit = !!amount.match(/-\d/)
 
         items << OpenStruct.new(
           :account_name   => account_name,
@@ -64,8 +66,8 @@ protected
           :event          => event,
           :time           => time,
           :amount         => amount,
-          :is_debit       => !!amount.match(/-\d/),
-          :balance        => balance
+          :balance        => balance,
+          :is_debit       => is_debit
         )
       end  # each row
     end  # each account
