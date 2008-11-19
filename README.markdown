@@ -7,12 +7,14 @@ Shows activity from the last 14 days across all accounts under the same login.
 
 Uses HTTP Basic authentication (personnummer as username, PIN as password) as
 some web-based feed readers (like Bloglines) will otherwise not consider the
-feed fully private.
+feed fully private. The feed URL will be something like this:
+
+    http://7512301234:9876@example.com/feeds/ica.atom
 
 HTTP Basic is plaintext. You should trust the connection between your client and
 the server. Also, make sure you don't share the feed if you use a web-based reader.
 
-I will not provide a hosted version of this feed for your own privacy.
+For your own privacy, I will not offer a hosted version of this feed.
 
 
 ## Credits and license
