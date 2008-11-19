@@ -64,6 +64,7 @@ protected
           :event          => event,
           :time           => time,
           :amount         => amount,
+          :is_debit       => !!amount.match(/-\d/),
           :balance        => balance
         )
       end  # each row
@@ -90,11 +91,12 @@ protected
 
       items.each do |item|
         item_date = item.time.strftime('%Y-%m-%d')
+        style = item.is_debit ? 'color:red' : 'color:green'
         feed.entry do |entry|
           # Can't use time-with-index for id, since that will change
           entry.id      "tag:ica-banken,#{SCHEMA_DATE}:#{@pnr}/#{item.account_number};#{item_date};#{item.event.gsub(/\W/, '')};#{item.amount};#{item.balance}".gsub(/\s+/, '')
           entry.title   item.event
-          entry.content "<dl><dt>Konto:</dt><dd>#{item.account_name} (#{item.account_number})</dd><dt>Datum:</dt><dd>#{item_date}</dd><dt>Belopp:</dt><dd>#{item.amount}</dd><dt>Saldo:</dt><dd>#{item.balance}</dd></dl>", :type => 'html'
+          entry.content %{<dl><dt>Konto:</dt><dd>#{item.account_name} (#{item.account_number})</dd><dt>Datum:</dt><dd>#{item_date}</dd><dt>Belopp:</dt><dd style="#{style}">#{item.amount}</dd><dt>Saldo:</dt><dd>#{item.balance}</dd></dl>}, :type => 'html'
           entry.updated item.time.iso8601
         end
       end
