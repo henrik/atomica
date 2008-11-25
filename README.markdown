@@ -17,10 +17,18 @@ the server. Also, make sure you don't share the feed if you use a web-based read
 For your own privacy, I will not offer a hosted version of this feed.
 
 
+## Example screenshot
+
+Example screenshot with fake data in [NetNewsWire](http://www.newsgator.com/INDIVIDUALS/NETNEWSWIRE/):
+
+![Screenshot](http://henrik.nyh.se/uploads/atomica.png)
+
+
 ## TODO
 
  * Graceful error handling if auth details are wrong
  * Graceful error handling if scraping fails
+
 
 ## Credits and license
 
