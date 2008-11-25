@@ -98,7 +98,12 @@ protected
           # Can't use time-with-index for id, since that will change
           entry.id      "tag:ica-banken,#{SCHEMA_DATE}:#{@pnr}/#{item.account_number};#{item.time.strftime('%Y-%m-%d')};#{item.event.gsub(/\W/, '')};#{item.amount};#{item.balance}".gsub(/\s+/, '')
           entry.title   item.event
-          entry.content %{<dl><dt>Konto:</dt><dd>#{item.account_name} (#{item.account_number})</dd><dt>Datum:</dt><dd>#{item_date}</dd><dt>Belopp:</dt><dd style="#{style}">#{item.amount}</dd><dt>Saldo:</dt><dd>#{item.balance}</dd></dl>}, :type => 'html'
+          entry.content %{<table>
+                            <tr><th>Konto:</th>  <td>#{item.account_name} (#{item.account_number})</td></tr>
+                            <tr><th>Datum:</th>  <td>#{item_date}</td></tr>
+                            <tr><th>Belopp:</th> <td style="#{style}">#{item.amount}</td></tr>
+                            <tr><th>Saldo:</th>  <td>#{item.balance}</td></tr>
+                          </table>}, :type => 'html'
           entry.updated item.time.iso8601
         end
       end
