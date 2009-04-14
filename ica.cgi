@@ -92,7 +92,7 @@ protected
       %w[personal banking finance].each {|cat| feed.category :term => cat }
 
       items.each do |item|
-        item_date = [%w[_ Mån Tis Ons Tors Fre Lör Sön][item.time.wday], item.time.strftime('%Y-%m-%d')].join(' ')
+        item_date = [%w[Sön Mån Tis Ons Tors Fre Lör][item.time.wday], item.time.strftime('%Y-%m-%d')].join(' ')
         style = item.is_debit ? 'color:red' : 'color:green'
         feed.entry do |entry|
           # Can't use time-with-index for id, since that will change
