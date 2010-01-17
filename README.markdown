@@ -16,6 +16,10 @@ the server. Also, make sure you don't share the feed if you use a web-based read
 
 For your own privacy, I will not offer a hosted version of this feed.
 
+To debug, you can run it on the command line:
+
+    ruby ica.cgi 7512301234 9876
+
 
 ## Example screenshot
 

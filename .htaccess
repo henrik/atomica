@@ -4,4 +4,4 @@ RewriteEngine on
 RewriteRule ^(.+)\.atom$  $1.cgi
 
 # Give Apache CGI access to HTTP auth, http://www.besthostratings.com/articles/http-auth-php-cgi.html
-RewriteRule .*            -       [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteRule .*  -  [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

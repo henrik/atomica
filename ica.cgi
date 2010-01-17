@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 # AtomICA by Henrik Nyh <http://henrik.nyh.se>. See README.
 
-%w[cgi iconv ostruct rubygems].each {|lib| require lib }
+%w[cgi ostruct rubygems].each {|lib| require lib }
+gem 'mechanize', '~>0.9.3'
 require 'mechanize'  # sudo gem install mechanize
 require('builder') rescue require('active_support')  # sudo gem install builder
 
@@ -11,7 +12,8 @@ class AtomICA
   SCHEMA_DATE = "2008-11-19"
   
   def initialize(pnr, pwd)
-    @pnr, @pwd = pnr, pwd
+    @pnr = pnr.gsub(/\D/, '')  # Only keep digits.
+    @pwd = pwd.gsub(/\D/, '')
   end
   
   def render
@@ -32,22 +34,18 @@ protected
     end.click_button
 
     # Go to overview
-    details_page = agent.click(entry_page.links.text(/versikt/))
+    details_page = agent.click(entry_page.link_with(:text => /versikt/))
 
     # Follow account links and scrape
-    account_links = details_page.links.href(/account.aspx/)
+    account_links = details_page.links_with(:href => /account\.aspx/)
     account_links.each do |link|
       account_page = agent.click(link)
 
-      # Work in UTF-8
-      html = Iconv.iconv('utf8', 'latin1', account_page.root.to_s).to_s
-      doc = Hpricot(html)
-
-      header = doc.at('div.main div b')
+      header = account_page.at('div.main div b')
       account_name = header.children.first.to_s.sub(/,\s*$/, '')
       account_number = header.at('span').inner_text
 
-      rows = doc.search('.row')
+      rows = account_page.search('.row')
       rows.each_with_index do |row, index|
         label = row.at('label')
         next unless label
@@ -111,27 +109,35 @@ protected
 
   end  # def atomize
   
-  
-
 end  # class AtomICA
 
 
 if __FILE__ == $0
-  # HTTP Basic auth based on code from http://blogs.23.nu/c0re/2005/04/antville-7409/
-  require 'base64'
+  
+  if ENV['REQUEST_URI']  # CGI
+    
+    # HTTP Basic auth based on code from http://blogs.23.nu/c0re/2005/04/antville-7409/
+    require 'base64'
 
-  auth = ENV.has_key?('HTTP_AUTHORIZATION') && ENV['HTTP_AUTHORIZATION'].to_s.split
-  if auth && auth[0] == 'Basic'
-    pnr, pwd = Base64.decode64(auth[1]).split(':')[0..1]
-    puts "Content-Type: application/atom+xml"
-    puts
+    auth = ENV.has_key?('HTTP_AUTHORIZATION') && ENV['HTTP_AUTHORIZATION'].to_s.split
+    if auth && auth[0] == 'Basic'
+      pnr, pwd = Base64.decode64(auth[1]).split(':')[0..1]
+      puts "Content-Type: application/atom+xml"
+      puts
+      AtomICA.new(pnr, pwd).render
+    else
+      puts "Status: 401 Authorization Required"
+      puts %{WWW-Authenticate: Basic realm="#{AtomICA::NAME} pnr/PIN"}
+      puts "Content-Type: text/plain"
+      puts
+      puts "Please provide personnummer and PIN as HTTP auth username/password."
+    end
+    
+  else  # Command line
+    
+    pnr, pwd = ARGV
     AtomICA.new(pnr, pwd).render
-  else
-    puts "Status: 401 Authorization Required"
-    puts %{WWW-Authenticate: Basic realm="#{AtomICA::NAME} pnr/PIN"}
-    puts "Content-Type: text/plain"
-    puts
-    puts "Please provide personnummer and PIN as HTTP auth username/password."
+    
   end
 
 end
