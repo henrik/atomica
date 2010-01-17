@@ -14,7 +14,13 @@ feed fully private. The feed URL will be something like this:
 HTTP Basic is plaintext. You should trust the connection between your client and
 the server. Also, make sure you don't share the feed if you use a web-based reader.
 
-For your own privacy, I will not offer a hosted version of this feed.
+The script can take params instead of HTTP Basic to work with e.g. Google Reader:
+
+    http://example.com/feeds/ica.atom?pnr=7512301234&pwd=9876
+    
+Make sure you don't share the feed.
+
+For your own privacy, I will not offer a hosted version.
 
 To debug, you can run it on the command line:
 

@@ -115,13 +115,20 @@ end  # class AtomICA
 if __FILE__ == $0
   
   if ENV['REQUEST_URI']  # CGI
+    cgi = CGI.new
     
     # HTTP Basic auth based on code from http://blogs.23.nu/c0re/2005/04/antville-7409/
     require 'base64'
-
     auth = ENV.has_key?('HTTP_AUTHORIZATION') && ENV['HTTP_AUTHORIZATION'].to_s.split
+    
     if auth && auth[0] == 'Basic'
       pnr, pwd = Base64.decode64(auth[1]).split(':')[0..1]
+    else
+      pnr = cgi['pnr']
+      pwd = cgi['pwd']
+    end
+    
+    if !pnr.empty? && !pwd.empty?
       puts "Content-Type: application/atom+xml"
       puts
       AtomICA.new(pnr, pwd).render
@@ -130,7 +137,7 @@ if __FILE__ == $0
       puts %{WWW-Authenticate: Basic realm="#{AtomICA::NAME} pnr/PIN"}
       puts "Content-Type: text/plain"
       puts
-      puts "Please provide personnummer and PIN as HTTP auth username/password."
+      puts "Please provide personnummer and PIN as HTTP auth username/password or as pnr & pwd params."
     end
     
   else  # Command line
