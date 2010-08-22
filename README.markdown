@@ -24,7 +24,7 @@ For your own privacy, I will not offer a hosted version.
 
 To debug, you can run it on the command line:
 
-    ruby ica.cgi 7512301234 9876
+    ruby ica.rb 7512301234 9876
 
 
 ## Example screenshot

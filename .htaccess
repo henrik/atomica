@@ -1,7 +1,8 @@
 RewriteEngine on
+AddHandler cgi-script .rb
 
-# foo.atom -> foo.cgi
-RewriteRule ^(.+)\.atom$  $1.cgi
+# foo.atom -> foo.rb
+RewriteRule ^(.+)\.atom$  $1.rb
 
 # Give Apache CGI access to HTTP auth, http://www.besthostratings.com/articles/http-auth-php-cgi.html
 RewriteRule .*  -  [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
