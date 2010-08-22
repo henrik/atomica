@@ -2,7 +2,7 @@
 # AtomICA by Henrik Nyh <http://henrik.nyh.se>. See README.
 
 %w[cgi ostruct rubygems].each {|lib| require lib }
-gem 'mechanize', '~>0.9.3'
+gem 'mechanize', '~>1.0.0'
 require 'mechanize'  # sudo gem install mechanize
 require('builder') rescue require('active_support')  # sudo gem install builder
 
@@ -24,7 +24,7 @@ protected
 
   def scrape  
     items = []
-    agent = WWW::Mechanize.new
+    agent = Mechanize.new
     login_page = agent.get('https://mobil.icabanken.se/')
 
     # Log in
