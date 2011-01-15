@@ -25,7 +25,7 @@ protected
   def scrape  
     items = []
     agent = Mechanize.new
-    login_page = agent.get('https://mobil.icabanken.se/')
+    login_page = agent.get('https://mobil2.icabanken.se/')
 
     # Log in
     entry_page = login_page.form_with(:action => 'login.aspx') do |f|
