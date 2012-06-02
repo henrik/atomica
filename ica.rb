@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# encoding: utf-8
 # AtomICA by Henrik Nyh <http://henrik.nyh.se>. See README.
 
 %w[cgi ostruct rubygems].each {|lib| require lib }
@@ -10,19 +11,19 @@ class AtomICA
   NAME = "AtomICA"
   VERSION = "1.0"
   SCHEMA_DATE = "2008-11-19"
-  
+
   def initialize(pnr, pwd)
     @pnr = pnr.gsub(/\D/, '')  # Only keep digits.
     @pwd = pwd.gsub(/\D/, '')
   end
-  
+
   def render
     atomize(scrape)
   end
-  
+
 protected
 
-  def scrape  
+  def scrape
     items = []
     agent = Mechanize.new
     login_page = agent.get('https://mobil2.icabanken.se/')
@@ -73,12 +74,12 @@ protected
     items.sort_by {|item| item.time }
 
   end  # def scrape
-  
+
   def atomize(items)
     updated_at = (items.last ? items.last.time : Time.now).iso8601
 
     xml = Builder::XmlMarkup.new(:indent => 2, :target => $stdout)
-    xml.instruct! :xml, :version => "1.0" 
+    xml.instruct! :xml, :version => "1.0"
     xml.feed(:xmlns => "http://www.w3.org/2005/Atom") do |feed|
 
       feed.title     "Kontohistorik för #{@pnr}"
@@ -108,26 +109,26 @@ protected
     end
 
   end  # def atomize
-  
+
 end  # class AtomICA
 
 
 if __FILE__ == $0
-  
+
   if ENV['REQUEST_URI']  # CGI
     cgi = CGI.new
-    
+
     # HTTP Basic auth based on code from http://blogs.23.nu/c0re/2005/04/antville-7409/
     require 'base64'
     auth = ENV.has_key?('HTTP_AUTHORIZATION') && ENV['HTTP_AUTHORIZATION'].to_s.split
-    
+
     if auth && auth[0] == 'Basic'
       pnr, pwd = Base64.decode64(auth[1]).split(':')[0..1]
     else
       pnr = cgi['pnr']
       pwd = cgi['pwd']
     end
-    
+
     if !pnr.empty? && !pwd.empty?
       puts "Content-Type: application/atom+xml"
       puts
@@ -139,12 +140,12 @@ if __FILE__ == $0
       puts
       puts "Please provide personnummer and PIN as HTTP auth username/password or as pnr & pwd params."
     end
-    
+
   else  # Command line
-    
+
     pnr, pwd = ARGV
     AtomICA.new(pnr, pwd).render
-    
+
   end
 
 end
