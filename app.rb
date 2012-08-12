@@ -12,9 +12,7 @@ helpers do
 end
 
 get "/" do
-  md = File.read("./README.markdown")
-  html = RDiscount.new(md).to_html
-  "<body><title>#{AtomICA::NAME}</title>#{html}</body>"
+  %{<title>#{AtomICA::NAME}</title><body><a href="https://github.com/henrik/atomica#readme">README.</a></body>}
 end
 
 get "/feed" do
@@ -30,5 +28,6 @@ get "/feed" do
   end
 
   content_type "application/atom+xml"
+  cache_control :public, max_age: 300  # 5 mins.
   AtomICA.new(pnr, pwd).render
 end
