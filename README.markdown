@@ -35,6 +35,8 @@ Example screenshot with fake data in [NetNewsWire](http://www.newsgator.com/INDI
 
  * Graceful error handling if auth details are wrong
  * Graceful error handling if scraping fails
+ * Caching (careful so HTTP auth doesn't cause conflation)
+ * Configure Heroku to filter logs
 
 
 ## Credits and license
