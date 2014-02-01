@@ -3,23 +3,19 @@
 Ruby Sinatra app that provides an Atom feed of your ICA-banken account activity.
 ICA-banken is a Swedish bank.
 
-Shows activity from the last 14 days across all accounts under the same login.
-
-Uses HTTP Basic authentication (personnummer as username, PIN as password) as
-some web-based feed readers (like Bloglines) will otherwise not consider the
-feed fully private. The feed URL will be something like this:
-
-    https://7512301234:9876@atomica.herokuapp.com/feed
-
-The script can take params instead of HTTP Basic to work with e.g. Google Reader:
+Provide personnummer and PIN with either regular params (e.g. for Feedly):
 
     https://atomica.herokuapp.com/feed?pnr=7512301234&pwd=9876
 
-Make sure you don't share the feed.
+Or with HTTP Basic authentication:
 
-I suggest you set up your own instance on Heroku, as you don't know if someone else's will do something evil.
+    https://7512301234:9876@atomica.herokuapp.com/feed
 
-To debug, you can run it on the command line:
+You may want to make sure you or your RSS reader app don't share the feed URL or contents.
+
+I suggest you set up your own instance on Heroku, as you don't know if someone else's will do something evil with your authentication details.
+
+To debug, you can run AtomICA on the command line:
 
     ruby ica.rb 7512301234 9876
 
