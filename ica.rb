@@ -14,9 +14,13 @@ class AtomICA
   VERSION = "2.0"
   SCHEMA_DATE = "2014-02-01"
 
-  API_URL = "https://appserver.icabanken.se/login/"
   # Sniffed from the iOS app. Required.
+  # Expired? Borrow from https://github.com/liato/android-bankdroid/blob/master/src/com/liato/bankdroid/banking/banks/icabanken/ICABanken.java
+  # or sniff with e.g. http://www.charlesproxy.com/
   API_KEY = "D65F6586-F0FA-477B-A2B2-05D9502C8E53"
+
+  API_URL = "https://appserver.icabanken.se/login/"
+
   # Not required but a courtesy.
   USER_AGENT = "#{NAME}/#{VERSION} (https://github.com/henrik/atomica)"
 
@@ -56,7 +60,7 @@ class AtomICA
       OpenStruct.new(
         account_name: "ERROR",
         account_number: "ERROR",
-        event: "Wrong personnummer or PIN?",
+        event: "Wrong personnummer or PIN? Expired API key?",
         time: Time.now,
         amount: 0,
         balance: 0,
