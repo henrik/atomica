@@ -26,13 +26,6 @@ To debug, you can run it on the command line:
 Note that if you log in with the wrong PIN three times in a row, ICA may lock your account.
 
 
-## Example screenshot
-
-Example screenshot with fake data in [NetNewsWire](http://www.newsgator.com/INDIVIDUALS/NETNEWSWIRE/):
-
-![Screenshot](http://henrik.nyh.se/uploads/atomica.png)
-
-
 ## TODO
 
  * Caching (careful so HTTP auth doesn't cause conflation)
