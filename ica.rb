@@ -2,16 +2,23 @@
 # encoding: utf-8
 # AtomICA by Henrik Nyh <http://henrik.nyh.se>. See README.
 
-require "cgi"
 require "ostruct"
+require "json"
+require "time"
 
-require "mechanize"
+require "rest_client"
 require "builder"
 
 class AtomICA
   NAME = "AtomICA"
-  VERSION = "1.1"
-  SCHEMA_DATE = "2008-11-19"
+  VERSION = "2.0"
+  SCHEMA_DATE = "2014-02-01"
+
+  API_URL = "https://appserver.icabanken.se/login/"
+  # Sniffed from the iOS app. Required.
+  API_KEY = "D65F6586-F0FA-477B-A2B2-05D9502C8E53"
+  # Not required but a courtesy.
+  USER_AGENT = "#{NAME}/#{VERSION} (https://github.com/henrik/atomica)"
 
   def initialize(pnr, pwd)
     @pnr = pnr.gsub(/\D/, '')  # Only keep digits.
@@ -26,53 +33,36 @@ class AtomICA
 
   def scrape
     items = []
-    agent = Mechanize.new
-    login_page = agent.get("https://mobil2.icabanken.se/")
 
-    # Log in
-    entry_page = login_page.form_with(action: 'login.aspx') do |f|
-      f.pnr_phone = @pnr
-      f.pwd_phone = @pwd
-    end.click_button
-
-    # Go to overview
-    details_page = agent.click(entry_page.link_with(text: /versikt/))
-
-    # Follow account links and scrape
-    account_links = details_page.links_with(href: /account\.aspx/)
-    account_links.each do |link|
-      account_page = agent.click(link)
-
-      header = account_page.at('div.main div b')
-      account_name = header.children.first.to_s.sub(/,\s*$/, '')
-      account_number = header.at('span').inner_text
-
-      rows = account_page.search('.row')
-      rows.each_with_index do |row, index|
-        label = row.at('label')
-        next unless label
-        vals = row.search('div.value').map {|x| x.inner_text }
-
-        event = label.inner_text
-        time = Time.parse(vals.first[/\d{4}-\d\d-\d\d/])
-        time = time + rows.length - index  # to order items within same date
-        amount = vals[1][/- Belopp (.+ kr)/, 1]
-        balance = vals.last[/- Saldo (.+ kr)/, 1]
-        is_debit = !!amount.match(/-\d/)
-
+    response = RestClient.get(API_URL, accept: :json, :ApiKey => API_KEY, :"User-Agent" => USER_AGENT, params: { customerId: @pnr, password: @pwd })
+    hash = JSON.parse(response.body)
+    hash.fetch("AccountList").fetch("Accounts").each do |account|
+      account["Transactions"].each do |transaction|
         items << OpenStruct.new(
-          account_name: account_name,
-          account_number: account_number,
-          event: event,
-          time: time,
-          amount: amount,
-          balance: balance,
-          is_debit: is_debit
+          account_name:   account["Name"],
+          account_number: account["AccountNumber"],
+          event:          transaction["MemoText"],
+          time:           Time.parse(transaction["PostedDate"]),
+          amount:         transaction["Amount"],
+          balance:        transaction["AccountBalance"],
+          is_debit:       transaction["Amount"] < 0,
         )
-      end  # each row
-    end  # each account
+      end
+    end
 
     items.sort_by(&:time)
+  rescue RestClient::Forbidden
+    [
+      OpenStruct.new(
+        account_name: "ERROR",
+        account_number: "ERROR",
+        event: "Wrong personnummer or PIN?",
+        time: Time.now,
+        amount: 0,
+        balance: 0,
+        is_debit: false
+      )
+    ]
   end  # def scrape
 
   def atomize(items)
@@ -114,5 +104,5 @@ end  # class AtomICA
 if __FILE__ == $0
   # CLI
   pnr, pwd = ARGV
-  AtomICA.new(pnr, pwd).render
+  puts AtomICA.new(pnr, pwd).render
 end

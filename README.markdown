@@ -23,6 +23,8 @@ To debug, you can run it on the command line:
 
     ruby ica.rb 7512301234 9876
 
+Note that if you log in with the wrong PIN three times in a row, ICA may lock your account.
+
 
 ## Example screenshot
 

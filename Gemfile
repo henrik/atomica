@@ -1,7 +1,7 @@
 source :rubygems
 
 gem "sinatra"
-gem "mechanize"
+gem "rest_client"
 gem "builder"
 
 group :production do
