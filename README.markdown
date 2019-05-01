@@ -1,5 +1,7 @@
 # AtomICA
 
+**NO LONGER MAINTAINED!**
+
 Ruby Sinatra app that provides an Atom feed of your ICA-banken account activity.
 ICA-banken is a Swedish bank.
 
